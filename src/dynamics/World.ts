@@ -496,7 +496,7 @@ export default class World<T = null> {
    *
    * Warning: This function is locked during callbacks.
    */
-  createBody(def?: BodyDef): Body<T>;
+  createBody(def?: BodyDef<T>): Body<T>;
   createBody(position: Vec2, angle?: number): Body<T>;
   // tslint:disable-next-line:typedef
   createBody(arg1?, arg2?) {
