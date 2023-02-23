@@ -46,7 +46,7 @@ const STATIC = 'static';
 const KINEMATIC = 'kinematic';
 const DYNAMIC = 'dynamic';
 
-export interface BodyDef {
+export interface BodyDef<T = null > {
   /**
    * Body types are static, kinematic, or dynamic. Note: if a dynamic
    * body would have zero mass, the mass is set to one.
@@ -103,7 +103,7 @@ export interface BodyDef {
    * Does this body start out active?
    */
   active?: boolean;
-  userData?: any;
+  userData?: T;
 }
 
 const BodyDefDefault: BodyDef = {
@@ -145,7 +145,7 @@ export class MassData {
  *
  * To create a new Body use {@link World.createBody}.
  */
-export default class Body {
+export default class Body<T = null> {
   /**
    * A static body does not move under simulation and behaves as if it has infinite mass.
    * Internally, zero is stored for the mass and the inverse mass.
@@ -172,7 +172,7 @@ export default class Body {
    */
   static readonly DYNAMIC: BodyType = 'dynamic';
 
-  /** @internal */ m_world: World;
+  /** @internal */ m_world: World<T>;
   /** @internal */ m_awakeFlag: boolean;
   /** @internal */ m_autoSleepFlag: boolean;
   /** @internal */ m_bulletFlag: boolean;
@@ -180,7 +180,7 @@ export default class Body {
   /** @internal */ m_activeFlag: boolean;
   /** @internal */ m_islandFlag: boolean;
   /** @internal */ m_toiFlag: boolean;
-  /** @internal */ m_userData: unknown;
+  /** @internal */ m_userData: T;
   /** @internal */ m_type: BodyType;
   /** @internal */ m_mass: number;
   /** @internal */ m_invMass: number;
@@ -204,13 +204,13 @@ export default class Body {
   /** @internal */ m_sleepTime: number;
   /** @internal */ m_jointList: JointEdge | null;
   /** @internal */ m_contactList: ContactEdge | null;
-  /** @internal */ m_fixtureList: Fixture | null;
-  /** @internal */ m_prev: Body | null;
-  /** @internal */ m_next: Body | null;
+  /** @internal */ m_fixtureList: Fixture<T> | null;
+  /** @internal */ m_prev: Body<T> | null;
+  /** @internal */ m_next: Body<T> | null;
   /** @internal */ m_destroyed: boolean;
 
   /** @internal */
-  constructor(world: World, def: BodyDef) {
+  constructor(world: World<T>, def: BodyDef<T>) {
     def = options(def, BodyDefDefault);
 
     _ASSERT && common.assert(Vec2.isValid(def.position));
@@ -315,23 +315,23 @@ export default class Body {
     return this.m_world && this.m_world.isLocked() ? true : false;
   }
 
-  getWorld(): World {
+  getWorld(): World<T> {
     return this.m_world;
   }
 
-  getNext(): Body | null {
+  getNext(): Body<T> | null {
     return this.m_next;
   }
 
-  setUserData(data: any): void {
+  setUserData(data: T): void {
     this.m_userData = data;
   }
 
-  getUserData(): unknown {
+  getUserData(): T {
     return this.m_userData;
   }
 
-  getFixtureList(): Fixture | null {
+  getFixtureList(): Fixture<T> | null {
     return this.m_fixtureList;
   }
 
@@ -362,17 +362,17 @@ export default class Body {
   /**
    * This will alter the mass and velocity.
    */
-  setStatic(): Body {
+  setStatic(): Body<T> {
     this.setType(STATIC);
     return this;
   }
 
-  setDynamic(): Body {
+  setDynamic(): Body<T> {
     this.setType(DYNAMIC);
     return this;
   }
 
-  setKinematic(): Body {
+  setKinematic(): Body<T> {
     this.setType(KINEMATIC);
     return this;
   }
@@ -1012,7 +1012,7 @@ export default class Body {
   /**
    * @internal Used for deserialize.
    */
-  _addFixture(fixture: Fixture): Fixture {
+  _addFixture(fixture: Fixture<T>): Fixture<T> {
     _ASSERT && common.assert(this.isWorldLocked() == false);
 
     if (this.isWorldLocked() == true) {
@@ -1060,7 +1060,7 @@ export default class Body {
       return null;
     }
 
-    const fixture = new Fixture(this, shape, fixdef);
+    const fixture = new Fixture<T>(this, shape, fixdef);
     this._addFixture(fixture);
     return fixture;
   }

@@ -108,14 +108,14 @@ export class ContactImpulse {
 /**
  * Finds and solves islands. An island is a connected subset of the world.
  */
-export default class Solver {
-  m_world: World;
-  m_stack: Body[];
-  m_bodies: Body[];
+export default class Solver<T = null> {
+  m_world: World<T>;
+  m_stack: Body<T>[];
+  m_bodies: Body<T>[];
   m_contacts: Contact[];
   m_joints: Joint[];
 
-  constructor(world: World) {
+  constructor(world: World<T>) {
     this.m_world = world;
     this.m_stack = [];
     this.m_bodies = [];
@@ -130,7 +130,7 @@ export default class Solver {
     this.m_joints.length = 0;
   }
 
-  addBody(body: Body): void {
+  addBody(body: Body<T>): void {
     _ASSERT && common.assert(body instanceof Body, 'Not a Body!', body);
     this.m_bodies.push(body);
     // why?

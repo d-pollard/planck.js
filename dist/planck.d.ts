@@ -648,8 +648,8 @@ declare class DynamicTree<T> {
  * The broad-phase wraps and extends a dynamic-tree to keep track of moved
  * objects and query them on update.
  */
-declare class BroadPhase {
-    m_tree: DynamicTree<FixtureProxy>;
+declare class BroadPhase<T = null> {
+    m_tree: DynamicTree<FixtureProxy<T>>;
     m_proxyCount: number;
     m_moveBuffer: number[];
     m_callback: (userDataA: any, userDataB: any) => void;
@@ -657,7 +657,7 @@ declare class BroadPhase {
     /**
      * Get user data from a proxy. Returns null if the id is invalid.
      */
-    getUserData(proxyId: number): FixtureProxy;
+    getUserData(proxyId: number): FixtureProxy<T>;
     /**
      * Test overlap of fat AABBs.
      */
@@ -709,7 +709,7 @@ declare class BroadPhase {
      * Create a proxy with an initial AABB. Pairs are not reported until UpdatePairs
      * is called.
      */
-    createProxy(aabb: AABB, userData: FixtureProxy): number;
+    createProxy(aabb: AABB, userData: FixtureProxy<T>): number;
     /**
      * Destroy a proxy. It is up to the client to remove any pairs.
      */
@@ -729,15 +729,15 @@ declare class BroadPhase {
     /**
      * Update the pairs. This results in pair callbacks. This can only add pairs.
      */
-    updatePairs(addPairCallback: (userDataA: FixtureProxy, userDataB: FixtureProxy) => void): void;
+    updatePairs(addPairCallback: (userDataA: FixtureProxy<T>, userDataB: FixtureProxy<T>) => void): void;
     queryCallback: (proxyId: number) => boolean;
 }
 /**
  * A fixture definition is used to create a fixture. This class defines an
  * abstract fixture definition. You can reuse fixture definitions safely.
  */
-interface FixtureOpt {
-    userData?: unknown;
+interface FixtureOpt<T = null> {
+    userData?: T;
     /**
      * The friction coefficient, usually in the range [0,1]
      */
@@ -775,12 +775,12 @@ interface FixtureDef extends FixtureOpt {
 /**
  * This proxy is used internally to connect shape children to the broad-phase.
  */
-declare class FixtureProxy {
+declare class FixtureProxy<T = null> {
     aabb: AABB;
-    fixture: Fixture;
+    fixture: Fixture<T>;
     childIndex: number;
     proxyId: number;
-    constructor(fixture: Fixture, childIndex: number);
+    constructor(fixture: Fixture<T>, childIndex: number);
 }
 /**
  * A fixture is used to attach a shape to a body for collision detection. A
@@ -789,10 +789,10 @@ declare class FixtureProxy {
  *
  * To create a new Fixture use {@link Body.createFixture}.
  */
-declare class Fixture {
-    constructor(body: Body, def: FixtureDef);
-    constructor(body: Body, shape: Shape, def?: FixtureOpt);
-    constructor(body: Body, shape: Shape, density?: number);
+declare class Fixture<T = null> {
+    constructor(body: Body<T>, def: FixtureDef);
+    constructor(body: Body<T>, shape: Shape, def?: FixtureOpt);
+    constructor(body: Body<T>, shape: Shape, density?: number);
     /**
      * Get the type of the child shape. You can use this to down cast to the
      * concrete shape.
@@ -823,20 +823,20 @@ declare class Fixture {
      * Get the user data that was assigned in the fixture definition. Use this to
      * store your application specific data.
      */
-    getUserData(): unknown;
+    getUserData(): T;
     /**
      * Set the user data. Use this to store your application specific data.
      */
-    setUserData(data: unknown): void;
+    setUserData(data: T): void;
     /**
      * Get the parent body of this fixture. This is null if the fixture is not
      * attached.
      */
-    getBody(): Body;
+    getBody(): Body<T>;
     /**
      * Get the next fixture in the parent body's fixture list.
      */
-    getNext(): Fixture | null;
+    getNext(): Fixture<T> | null;
     /**
      * Get the density of this fixture.
      */
@@ -886,7 +886,7 @@ declare class Fixture {
     /**
      * These support body activation/deactivation.
      */
-    createProxies(broadPhase: BroadPhase, xf: Transform): void;
+    createProxies(broadPhase: BroadPhase<T>, xf: Transform): void;
     destroyProxies(broadPhase: BroadPhase): void;
     /**
      * Updates this fixture proxy in broad-phase (with combined AABB of current and
@@ -1263,7 +1263,7 @@ type WorldRayCastCallback = (fixture: Fixture, point: Vec2, normal: Vec2, fracti
  */
 type WorldAABBQueryCallback = (fixture: Fixture) => boolean;
 declare function World(def?: WorldDef | Vec2 | null): World;
-declare class World {
+declare class World<T = null> {
     /**
      * @param def World definition or gravity vector.
      */
@@ -1274,7 +1274,7 @@ declare class World {
      *
      * @return the head of the world body list.
      */
-    getBodyList(): Body | null;
+    getBodyList(): Body<T> | null;
     /**
      * Get the world joint list. With the returned joint, use Joint.getNext to get
      * the next joint in the world list. A null joint indicates the end of the list.
@@ -1398,8 +1398,8 @@ declare class World {
      *
      * Warning: This function is locked during callbacks.
      */
-    createBody(def?: BodyDef): Body;
-    createBody(position: Vec2, angle?: number): Body;
+    createBody(def?: BodyDef): Body<T>;
+    createBody(position: Vec2, angle?: number): Body<T>;
     createDynamicBody(def?: BodyDef): Body;
     createDynamicBody(position: Vec2, angle?: number): Body;
     createKinematicBody(def?: BodyDef): Body;
@@ -1447,7 +1447,7 @@ declare class World {
      *
      * Warning: You cannot create/destroy world entities inside these callbacks.
      */
-    on(name: "begin-contact", listener: (contact: Contact) => void): World;
+    on(name: "begin-contact", listener: (contact: Contact) => void): World<T>;
     /**
      * Called when two fixtures cease to touch.
      *
@@ -1461,7 +1461,7 @@ declare class World {
      *
      * Warning: You cannot create/destroy world entities inside these callbacks.
      */
-    on(name: "end-contact", listener: (contact: Contact) => void): World;
+    on(name: "end-contact", listener: (contact: Contact) => void): World<T>;
     /**
      * This is called after a contact is updated. This allows you to inspect a
      * contact before it goes to the solver. If you are careful, you can modify the
@@ -1474,7 +1474,7 @@ declare class World {
      *
      * Warning: You cannot create/destroy world entities inside these callbacks.
      */
-    on(name: "pre-solve", listener: (contact: Contact, oldManifold: Manifold) => void): World;
+    on(name: "pre-solve", listener: (contact: Contact, oldManifold: Manifold) => void): World<T>;
     /**
      * This lets you inspect a contact after the solver is finished. This is useful
      * for inspecting impulses. Note: the contact manifold does not include time of
@@ -1484,20 +1484,20 @@ declare class World {
      *
      * Warning: You cannot create/destroy world entities inside these callbacks.
      */
-    on(name: "post-solve", listener: (contact: Contact, impulse: ContactImpulse) => void): World;
+    on(name: "post-solve", listener: (contact: Contact, impulse: ContactImpulse) => void): World<T>;
     /** Listener is called whenever a body is removed. */
-    on(name: "remove-body", listener: (body: Body) => void): World;
+    on(name: "remove-body", listener: (body: Body) => void): World<T>;
     /** Listener is called whenever a joint is removed implicitly or explicitly. */
-    on(name: "remove-joint", listener: (joint: Joint) => void): World;
+    on(name: "remove-joint", listener: (joint: Joint) => void): World<T>;
     /** Listener is called whenever a fixture is removed implicitly or explicitly. */
-    on(name: "remove-fixture", listener: (fixture: Fixture) => void): World;
-    off(name: "begin-contact", listener: (contact: Contact) => void): World;
-    off(name: "end-contact", listener: (contact: Contact) => void): World;
-    off(name: "pre-solve", listener: (contact: Contact, oldManifold: Manifold) => void): World;
-    off(name: "post-solve", listener: (contact: Contact, impulse: ContactImpulse) => void): World;
-    off(name: "remove-body", listener: (body: Body) => void): World;
-    off(name: "remove-joint", listener: (joint: Joint) => void): World;
-    off(name: "remove-fixture", listener: (fixture: Fixture) => void): World;
+    on(name: "remove-fixture", listener: (fixture: Fixture) => void): World<T>;
+    off(name: "begin-contact", listener: (contact: Contact) => void): World<T>;
+    off(name: "end-contact", listener: (contact: Contact) => void): World<T>;
+    off(name: "pre-solve", listener: (contact: Contact, oldManifold: Manifold) => void): World<T>;
+    off(name: "post-solve", listener: (contact: Contact, impulse: ContactImpulse) => void): World<T>;
+    off(name: "remove-body", listener: (body: Body) => void): World<T>;
+    off(name: "remove-joint", listener: (joint: Joint) => void): World<T>;
+    off(name: "remove-fixture", listener: (fixture: Fixture) => void): World<T>;
     publish(name: string, arg1?: any, arg2?: any, arg3?: any): number;
 }
 declare class TimeStep {
@@ -1643,7 +1643,7 @@ declare abstract class Joint {
     abstract solvePositionConstraints(step: TimeStep): boolean;
 }
 type BodyType = "static" | "kinematic" | "dynamic";
-interface BodyDef {
+interface BodyDef<T = null> {
     /**
      * Body types are static, kinematic, or dynamic. Note: if a dynamic
      * body would have zero mass, the mass is set to one.
@@ -1700,7 +1700,7 @@ interface BodyDef {
      * Does this body start out active?
      */
     active?: boolean;
-    userData?: any;
+    userData?: T;
 }
 /**
  * MassData This holds the mass data computed for a shape.
@@ -1718,7 +1718,7 @@ declare class MassData {
  *
  * To create a new Body use {@link World.createBody}.
  */
-declare class Body {
+declare class Body<T = null> {
     /**
      * A static body does not move under simulation and behaves as if it has infinite mass.
      * Internally, zero is stored for the mass and the inverse mass.
@@ -1744,11 +1744,11 @@ declare class Body {
      */
     static readonly DYNAMIC: BodyType;
     isWorldLocked(): boolean;
-    getWorld(): World;
-    getNext(): Body | null;
-    setUserData(data: any): void;
-    getUserData(): unknown;
-    getFixtureList(): Fixture | null;
+    getWorld(): World<T>;
+    getNext(): Body<T> | null;
+    setUserData(data: T): void;
+    getUserData(): T;
+    getFixtureList(): Fixture<T> | null;
     getJointList(): JointEdge | null;
     /**
      * Warning: this list changes during the time step and you may miss some
@@ -1761,9 +1761,9 @@ declare class Body {
     /**
      * This will alter the mass and velocity.
      */
-    setStatic(): Body;
-    setDynamic(): Body;
-    setKinematic(): Body;
+    setStatic(): Body<T>;
+    setDynamic(): Body<T>;
+    setKinematic(): Body<T>;
     isBullet(): boolean;
     /**
      * Should this body be treated like a bullet for continuous collision detection?

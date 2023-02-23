@@ -40,8 +40,8 @@ const _ASSERT = typeof ASSERT === 'undefined' ? false : ASSERT;
  * A fixture definition is used to create a fixture. This class defines an
  * abstract fixture definition. You can reuse fixture definitions safely.
  */
-export interface FixtureOpt {
-  userData?: unknown;
+export interface FixtureOpt<T = null> {
+  userData?: T;
   /**
    * The friction coefficient, usually in the range [0,1]
    */
@@ -93,12 +93,12 @@ const FixtureDefDefault: FixtureOpt = {
 /**
  * This proxy is used internally to connect shape children to the broad-phase.
  */
-export class FixtureProxy {
+export class FixtureProxy<T = null> {
   aabb: AABB;
-  fixture: Fixture;
+  fixture: Fixture<T>;
   childIndex: number;
   proxyId: number;
-  constructor(fixture: Fixture, childIndex: number) {
+  constructor(fixture: Fixture<T>, childIndex: number) {
     this.aabb = new AABB();
     this.fixture = fixture;
     this.childIndex = childIndex;
@@ -113,8 +113,8 @@ export class FixtureProxy {
  *
  * To create a new Fixture use {@link Body.createFixture}.
  */
-export default class Fixture {
-  /** @internal */ m_body: Body;
+export default class Fixture<T = null> {
+  /** @internal */ m_body: Body<T>;
   /** @internal */ m_friction: number;
   /** @internal */ m_restitution: number;
   /** @internal */ m_density: number;
@@ -123,16 +123,16 @@ export default class Fixture {
   /** @internal */ m_filterCategoryBits: number;
   /** @internal */ m_filterMaskBits: number;
   /** @internal */ m_shape: Shape;
-  /** @internal */ m_next: Fixture | null;
-  /** @internal */ m_proxies: FixtureProxy[];
+  /** @internal */ m_next: Fixture<T> | null;
+  /** @internal */ m_proxies: FixtureProxy<T>[];
   /** @internal */ m_proxyCount: number;
-  /** @internal */ m_userData: unknown;
+  /** @internal */ m_userData: T;
 
-  constructor(body: Body, def: FixtureDef);
-  constructor(body: Body, shape: Shape, def?: FixtureOpt);
-  constructor(body: Body, shape: Shape, density?: number);
+  constructor(body: Body<T>, def: FixtureDef);
+  constructor(body: Body<T>, shape: Shape, def?: FixtureOpt);
+  constructor(body: Body<T>, shape: Shape, density?: number);
   // tslint:disable-next-line:typedef
-  /** @internal */ constructor(body: Body, shape?, def?) {
+  /** @internal */ constructor(body: Body<T>, shape?, def?) {
     if (shape.shape) {
       def = shape;
       shape = shape.shape;
@@ -258,14 +258,14 @@ export default class Fixture {
    * Get the user data that was assigned in the fixture definition. Use this to
    * store your application specific data.
    */
-  getUserData(): unknown {
+  getUserData(): T {
     return this.m_userData;
   }
 
   /**
    * Set the user data. Use this to store your application specific data.
    */
-  setUserData(data: unknown): void {
+  setUserData(data: T): void {
     this.m_userData = data;
   }
 
@@ -273,14 +273,14 @@ export default class Fixture {
    * Get the parent body of this fixture. This is null if the fixture is not
    * attached.
    */
-  getBody(): Body {
+  getBody(): Body<T> {
     return this.m_body;
   }
 
   /**
    * Get the next fixture in the parent body's fixture list.
    */
-  getNext(): Fixture | null {
+  getNext(): Fixture<T> | null {
     return this.m_next;
   }
 
@@ -365,7 +365,7 @@ export default class Fixture {
   /**
    * These support body activation/deactivation.
    */
-  createProxies(broadPhase: BroadPhase, xf: Transform): void {
+  createProxies(broadPhase: BroadPhase<T>, xf: Transform): void {
     _ASSERT && common.assert(this.m_proxyCount == 0);
 
     // Create proxies in the broad-phase.

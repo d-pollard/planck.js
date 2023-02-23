@@ -37,8 +37,8 @@ const _ASSERT = typeof ASSERT === 'undefined' ? false : ASSERT;
  * The broad-phase wraps and extends a dynamic-tree to keep track of moved
  * objects and query them on update.
  */
-export default class BroadPhase {
-  m_tree: DynamicTree<FixtureProxy> = new DynamicTree<FixtureProxy>();
+export default class BroadPhase<T = null> {
+  m_tree = new DynamicTree<FixtureProxy<T>>();
   m_proxyCount: number = 0;
   m_moveBuffer: number[] = [];
 
@@ -48,7 +48,7 @@ export default class BroadPhase {
   /**
    * Get user data from a proxy. Returns null if the id is invalid.
    */
-  getUserData(proxyId: number): FixtureProxy {
+  getUserData(proxyId: number): FixtureProxy<T> {
     return this.m_tree.getUserData(proxyId);
   }
 
@@ -132,7 +132,7 @@ export default class BroadPhase {
    * Create a proxy with an initial AABB. Pairs are not reported until UpdatePairs
    * is called.
    */
-  createProxy(aabb: AABB, userData: FixtureProxy): number {
+  createProxy(aabb: AABB, userData: FixtureProxy<T>): number {
     _ASSERT && common.assert(AABB.isValid(aabb));
     const proxyId = this.m_tree.createProxy(aabb, userData);
     this.m_proxyCount++;
@@ -184,7 +184,7 @@ export default class BroadPhase {
   /**
    * Update the pairs. This results in pair callbacks. This can only add pairs.
    */
-  updatePairs(addPairCallback: (userDataA: FixtureProxy, userDataB: FixtureProxy) => void): void {
+  updatePairs(addPairCallback: (userDataA: FixtureProxy<T>, userDataB: FixtureProxy<T>) => void): void {
     _ASSERT && common.assert(typeof addPairCallback === 'function');
     this.m_callback = addPairCallback;
 

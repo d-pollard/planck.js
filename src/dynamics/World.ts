@@ -92,12 +92,12 @@ export type WorldRayCastCallback = (fixture: Fixture, point: Vec2, normal: Vec2,
  */
 export type WorldAABBQueryCallback = (fixture: Fixture) => boolean;
 
-export default class World {
-  /** @internal */ m_solver: Solver;
+export default class World<T = null> {
+  /** @internal */ m_solver: Solver<T>;
   /** @internal */ m_broadPhase: BroadPhase;
   /** @internal */ m_contactList: Contact | null;
   /** @internal */ m_contactCount: number;
-  /** @internal */ m_bodyList: Body | null;
+  /** @internal */ m_bodyList: Body<T> | null;
   /** @internal */ m_bodyCount: number;
   /** @internal */ m_jointList: Joint | null;
   /** @internal */ m_jointCount: number;
@@ -220,7 +220,7 @@ export default class World {
    *
    * @return the head of the world body list.
    */
-  getBodyList(): Body | null {
+  getBodyList(): Body<T> | null {
     return this.m_bodyList;
   }
 
@@ -474,7 +474,7 @@ export default class World {
   /**
    * @internal Used for deserialize.
    */
-  _addBody(body: Body): void {
+  _addBody(body: Body<T>): void {
     _ASSERT && common.assert(this.isLocked() === false);
     if (this.isLocked()) {
       return;
@@ -496,8 +496,8 @@ export default class World {
    *
    * Warning: This function is locked during callbacks.
    */
-  createBody(def?: BodyDef): Body;
-  createBody(position: Vec2, angle?: number): Body;
+  createBody(def?: BodyDef): Body<T>;
+  createBody(position: Vec2, angle?: number): Body<T>;
   // tslint:disable-next-line:typedef
   createBody(arg1?, arg2?) {
     _ASSERT && common.assert(this.isLocked() == false);
@@ -505,7 +505,7 @@ export default class World {
       return null;
     }
 
-    let def: BodyDef = {};
+    let def: BodyDef<T> = {};
     if (!arg1) {
     } else if (Vec2.isValid(arg1)) {
       def = { position : arg1, angle: arg2 };
@@ -513,7 +513,7 @@ export default class World {
       def = arg1;
     }
 
-    const body = new Body(this, def);
+    const body = new Body<T>(this, def);
     this._addBody(body);
     return body;
   }
@@ -1007,7 +1007,7 @@ export default class World {
    *
    * Warning: You cannot create/destroy world entities inside these callbacks.
    */
-  on(name: 'begin-contact', listener: (contact: Contact) => void): World;
+  on(name: 'begin-contact', listener: (contact: Contact) => void): World<T>;
   /**
    * Called when two fixtures cease to touch.
    *
@@ -1021,7 +1021,7 @@ export default class World {
    *
    * Warning: You cannot create/destroy world entities inside these callbacks.
    */
-  on(name: 'end-contact', listener: (contact: Contact) => void): World;
+  on(name: 'end-contact', listener: (contact: Contact) => void): World<T>;
   /**
    * This is called after a contact is updated. This allows you to inspect a
    * contact before it goes to the solver. If you are careful, you can modify the
@@ -1034,7 +1034,7 @@ export default class World {
    *
    * Warning: You cannot create/destroy world entities inside these callbacks.
    */
-  on(name: 'pre-solve', listener: (contact: Contact, oldManifold: Manifold) => void): World;
+  on(name: 'pre-solve', listener: (contact: Contact, oldManifold: Manifold) => void): World<T>;
   /**
    * This lets you inspect a contact after the solver is finished. This is useful
    * for inspecting impulses. Note: the contact manifold does not include time of
@@ -1044,13 +1044,13 @@ export default class World {
    *
    * Warning: You cannot create/destroy world entities inside these callbacks.
    */
-  on(name: 'post-solve', listener: (contact: Contact, impulse: ContactImpulse) => void): World;
+  on(name: 'post-solve', listener: (contact: Contact, impulse: ContactImpulse) => void): World<T>;
   /** Listener is called whenever a body is removed. */
-  on(name: 'remove-body', listener: (body: Body) => void): World;
+  on(name: 'remove-body', listener: (body: Body) => void): World<T>;
   /** Listener is called whenever a joint is removed implicitly or explicitly. */
-  on(name: 'remove-joint', listener: (joint: Joint) => void): World;
+  on(name: 'remove-joint', listener: (joint: Joint) => void): World<T>;
   /** Listener is called whenever a fixture is removed implicitly or explicitly. */
-  on(name: 'remove-fixture', listener: (fixture: Fixture) => void): World;
+  on(name: 'remove-fixture', listener: (fixture: Fixture) => void): World<T>;
   /**
    * Register an event listener.
    */
@@ -1069,13 +1069,13 @@ export default class World {
     return this;
   }
 
-  off(name: 'begin-contact', listener: (contact: Contact) => void): World;
-  off(name: 'end-contact', listener: (contact: Contact) => void): World;
-  off(name: 'pre-solve', listener: (contact: Contact, oldManifold: Manifold) => void): World;
-  off(name: 'post-solve', listener: (contact: Contact, impulse: ContactImpulse) => void): World;
-  off(name: 'remove-body', listener: (body: Body) => void): World;
-  off(name: 'remove-joint', listener: (joint: Joint) => void): World;
-  off(name: 'remove-fixture', listener: (fixture: Fixture) => void): World;
+  off(name: 'begin-contact', listener: (contact: Contact) => void): World<T>;
+  off(name: 'end-contact', listener: (contact: Contact) => void): World<T>;
+  off(name: 'pre-solve', listener: (contact: Contact, oldManifold: Manifold) => void): World<T>;
+  off(name: 'post-solve', listener: (contact: Contact, impulse: ContactImpulse) => void): World<T>;
+  off(name: 'remove-body', listener: (body: Body) => void): World<T>;
+  off(name: 'remove-joint', listener: (joint: Joint) => void): World<T>;
+  off(name: 'remove-fixture', listener: (fixture: Fixture) => void): World<T>;
   /**
    * Remove an event listener.
    */

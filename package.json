@@ -1,6 +1,6 @@
 {
-  "name": "planck",
-  "version": "1.0.0-alpha.4",
+  "name": "@d-pollard/planck",
+  "version": "1.0.0",
   "description": "2D JavaScript/TypeScript physics engine for cross-platform HTML5 game development",
   "homepage": "https://github.com/shakiba/planck.js",
   "keywords": [
@@ -17,11 +17,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/shakiba/planck.js.git"
+    "url": "git://github.com/d-pollard/planck.js.git"
   },
   "main": "dist/planck.js",
   "types": "index.d.ts",
-  "author": "Ali Shakiba",
+  "author": "Derek Pollard",
   "contributors": [
     "Erin Catto",
     "Ali Shakiba",

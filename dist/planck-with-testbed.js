@@ -28,7 +28,7 @@
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.planck = {}));
 }(this, (function (exports) { 'use strict';
 
-    /*! *****************************************************************************
+    /******************************************************************************
     Copyright (c) Microsoft Corporation.
 
     Permission to use, copy, modify, and/or distribute this software for any
