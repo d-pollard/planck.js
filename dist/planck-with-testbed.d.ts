@@ -1398,7 +1398,7 @@ declare class World<T = null> {
      *
      * Warning: This function is locked during callbacks.
      */
-    createBody(def?: BodyDef): Body<T>;
+    createBody(def?: BodyDef<T>): Body<T>;
     createBody(position: Vec2, angle?: number): Body<T>;
     createDynamicBody(def?: BodyDef): Body;
     createDynamicBody(position: Vec2, angle?: number): Body;
