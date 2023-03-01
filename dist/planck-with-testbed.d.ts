@@ -1607,7 +1607,7 @@ declare abstract class Joint<T = null> {
      * Get the next joint the world joint list.
      */
     getNext(): Joint<T>;
-    getUserData(): unknown;
+    getUserData(): T;
     setUserData(data: T): void;
     /**
      * Get collide connected. Note: modifying the collide connect flag won't work
