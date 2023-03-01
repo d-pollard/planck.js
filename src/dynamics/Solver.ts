@@ -113,7 +113,7 @@ export default class Solver<T = null> {
   m_stack: Body<T>[];
   m_bodies: Body<T>[];
   m_contacts: Contact[];
-  m_joints: Joint[];
+  m_joints: Joint<T>[];
 
   constructor(world: World<T>) {
     this.m_world = world;
@@ -145,7 +145,7 @@ export default class Solver<T = null> {
     this.m_contacts.push(contact);
   }
 
-  addJoint(joint: Joint): void {
+  addJoint(joint: Joint<T>): void {
     _ASSERT && common.assert(joint instanceof Joint, 'Not a Joint!', joint);
     this.m_joints.push(joint);
   }

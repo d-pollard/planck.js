@@ -202,7 +202,7 @@ export default class Body<T = null> {
   /** @internal */ m_angularDamping: number;
   /** @internal */ m_gravityScale: number;
   /** @internal */ m_sleepTime: number;
-  /** @internal */ m_jointList: JointEdge | null;
+  /** @internal */ m_jointList: JointEdge<T> | null;
   /** @internal */ m_contactList: ContactEdge | null;
   /** @internal */ m_fixtureList: Fixture<T> | null;
   /** @internal */ m_prev: Body<T> | null;
@@ -335,7 +335,7 @@ export default class Body<T = null> {
     return this.m_fixtureList;
   }
 
-  getJointList(): JointEdge | null {
+  getJointList(): JointEdge<T> | null {
     return this.m_jointList;
   }
 

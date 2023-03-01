@@ -99,7 +99,7 @@ export default class World<T = null> {
   /** @internal */ m_contactCount: number;
   /** @internal */ m_bodyList: Body<T> | null;
   /** @internal */ m_bodyCount: number;
-  /** @internal */ m_jointList: Joint | null;
+  /** @internal */ m_jointList: Joint<T> | null;
   /** @internal */ m_jointCount: number;
   /** @internal */ m_stepComplete: boolean;
   /** @internal */ m_allowSleep: boolean;
@@ -230,7 +230,7 @@ export default class World<T = null> {
    *
    * @return the head of the world joint list.
    */
-  getJointList(): Joint | null {
+  getJointList(): Joint<T> | null {
     return this.m_jointList;
   }
 
@@ -633,7 +633,7 @@ export default class World<T = null> {
    *
    * Warning: This function is locked during callbacks.
    */
-  createJoint<T extends Joint>(joint: T): T | null {
+  createJoint<JT extends Joint<T>>(joint: JT): JT | null {
     _ASSERT && common.assert(!!joint.m_bodyA);
     _ASSERT && common.assert(!!joint.m_bodyB);
     _ASSERT && common.assert(this.isLocked() == false);

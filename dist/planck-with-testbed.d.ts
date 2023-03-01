@@ -1281,7 +1281,7 @@ declare class World<T = null> {
      *
      * @return the head of the world joint list.
      */
-    getJointList(): Joint | null;
+    getJointList(): Joint<T> | null;
     /**
      * Get the world contact list. With the returned contact, use Contact.getNext to
      * get the next contact in the world list. A null contact indicates the end of
@@ -1419,7 +1419,7 @@ declare class World<T = null> {
      *
      * Warning: This function is locked during callbacks.
      */
-    createJoint<T extends Joint>(joint: T): T | null;
+    createJoint<JT extends Joint<T>>(joint: JT): JT | null;
     /**
      * Destroy a joint. This may cause the connected bodies to begin colliding.
      * Warning: This function is locked during callbacks.
@@ -1535,32 +1535,32 @@ declare class ContactImpulse {
  * a doubly linked list maintained in each attached body. Each joint has two
  * joint nodes, one for each attached body.
  */
-declare class JointEdge {
+declare class JointEdge<T = null> {
     /**
      * provides quick access to the other body attached.
      */
-    other: Body | null;
+    other: Body<T> | null;
     /**
      * the joint
      */
-    joint: Joint | null;
+    joint: Joint<T> | null;
     /**
      * prev the previous joint edge in the body's joint list
      */
-    prev: JointEdge | null;
+    prev: JointEdge<T> | null;
     /**
      * the next joint edge in the body's joint list
      */
-    next: JointEdge | null;
+    next: JointEdge<T> | null;
 }
 /**
  * Joint definitions are used to construct joints.
  */
-interface JointOpt {
+interface JointOpt<T = null> {
     /**
      * Use this to attach application specific data to your joints.
      */
-    userData?: any;
+    userData?: T;
     /**
      * Set this flag to true if the attached bodies
      * should collide.
@@ -1570,23 +1570,23 @@ interface JointOpt {
 /**
  * Joint definitions are used to construct joints.
  */
-interface JointDef extends JointOpt {
+interface JointDef<T = null> extends JointOpt<T> {
     /**
      * The first attached body.
      */
-    bodyA: Body;
+    bodyA: Body<T>;
     /**
      * The second attached body.
      */
-    bodyB: Body;
+    bodyB: Body<T>;
 }
 /**
- * The base joint class. Joints are used to constraint two bodies together in
+ * The base joint class. Joints are used to constrain two bodies together in
  * various fashions. Some joints also feature limits and motors.
  */
-declare abstract class Joint {
-    constructor(def: JointDef);
-    constructor(def: JointOpt, bodyA: Body, bodyB: Body);
+declare abstract class Joint<T = null> {
+    constructor(def: JointDef<T>);
+    constructor(def: JointOpt<T>, bodyA: Body<T>, bodyB: Body<T>);
     /**
      * Short-cut function to determine if either body is inactive.
      */
@@ -1598,17 +1598,17 @@ declare abstract class Joint {
     /**
      * Get the first body attached to this joint.
      */
-    getBodyA(): Body;
+    getBodyA(): Body<T>;
     /**
      * Get the second body attached to this joint.
      */
-    getBodyB(): Body;
+    getBodyB(): Body<T>;
     /**
      * Get the next joint the world joint list.
      */
-    getNext(): Joint;
+    getNext(): Joint<T>;
     getUserData(): unknown;
-    setUserData(data: unknown): void;
+    setUserData(data: T): void;
     /**
      * Get collide connected. Note: modifying the collide connect flag won't work
      * correctly because the flag is only checked when fixture AABBs begin to
@@ -1749,7 +1749,7 @@ declare class Body<T = null> {
     setUserData(data: T): void;
     getUserData(): T;
     getFixtureList(): Fixture<T> | null;
-    getJointList(): JointEdge | null;
+    getJointList(): JointEdge<T> | null;
     /**
      * Warning: this list changes during the time step and you may miss some
      * collisions if you don't use ContactListener.

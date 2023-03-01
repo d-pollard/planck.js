@@ -1,5 +1,5 @@
 /**
- * Planck.js v1.0.1
+ * Planck.js v1.0.2
  * @license The MIT license
  * @copyright Copyright (c) 2021 Erin Catto, Ali Shakiba
  *
@@ -5946,7 +5946,7 @@
         return JointEdge;
     }());
     /**
-     * The base joint class. Joints are used to constraint two bodies together in
+     * The base joint class. Joints are used to constrain two bodies together in
      * various fashions. Some joints also feature limits and motors.
      */
     var Joint = /** @class */ (function () {

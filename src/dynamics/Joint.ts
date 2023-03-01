@@ -35,33 +35,33 @@ const _ASSERT = typeof ASSERT === 'undefined' ? false : ASSERT;
  * a doubly linked list maintained in each attached body. Each joint has two
  * joint nodes, one for each attached body.
  */
-export class JointEdge {
+export class JointEdge<T = null> {
   /**
    * provides quick access to the other body attached.
    */
-  other: Body | null = null;
+  other: Body<T> | null = null;
   /**
    * the joint
    */
-  joint: Joint | null = null;
+  joint: Joint<T> | null = null;
   /**
    * prev the previous joint edge in the body's joint list
    */
-  prev: JointEdge | null = null;
+  prev: JointEdge<T> | null = null;
   /**
    * the next joint edge in the body's joint list
    */
-  next: JointEdge | null = null;
+  next: JointEdge<T> | null = null;
 }
 
 /**
  * Joint definitions are used to construct joints.
  */
-export interface JointOpt {
+export interface JointOpt<T = null> {
   /**
    * Use this to attach application specific data to your joints.
    */
-  userData?: any;
+  userData?: T;
   /**
    * Set this flag to true if the attached bodies
    * should collide.
@@ -71,15 +71,15 @@ export interface JointOpt {
 /**
  * Joint definitions are used to construct joints.
  */
-export interface JointDef extends JointOpt {
+export interface JointDef<T = null> extends JointOpt<T> {
   /**
    * The first attached body.
    */
-  bodyA: Body;
+  bodyA: Body<T>;
   /**
    * The second attached body.
    */
-  bodyB: Body;
+  bodyB: Body<T>;
 }
 
 const DEFAULTS = {
@@ -88,30 +88,30 @@ const DEFAULTS = {
 };
 
 /**
- * The base joint class. Joints are used to constraint two bodies together in
+ * The base joint class. Joints are used to constrain two bodies together in
  * various fashions. Some joints also feature limits and motors.
  */
-export default abstract class Joint {
+export default abstract class Joint<T = null> {
 
   /** @internal */ m_type: string = 'unknown-joint';
 
-  /** @internal */ m_bodyA: Body;
-  /** @internal */ m_bodyB: Body;
+  /** @internal */ m_bodyA: Body<T>;
+  /** @internal */ m_bodyB: Body<T>;
 
   /** @internal */ m_collideConnected: boolean;
 
-  /** @internal */ m_prev: Joint | null = null;
-  /** @internal */ m_next: Joint | null = null;
+  /** @internal */ m_prev: Joint<T> | null = null;
+  /** @internal */ m_next: Joint<T> | null = null;
 
-  /** @internal */ m_edgeA: JointEdge = new JointEdge();
-  /** @internal */ m_edgeB: JointEdge = new JointEdge();
+  /** @internal */ m_edgeA: JointEdge<T> = new JointEdge();
+  /** @internal */ m_edgeB: JointEdge<T> = new JointEdge();
 
   /** @internal */ m_islandFlag: boolean = false;
-  /** @internal */ m_userData: unknown;
+  /** @internal */ m_userData: T;
 
-  constructor(def: JointDef);
-  constructor(def: JointOpt, bodyA: Body, bodyB: Body);
-  constructor(def: JointDef | JointOpt, bodyA?: Body, bodyB?: Body) {
+  constructor(def: JointDef<T>);
+  constructor(def: JointOpt<T>, bodyA: Body<T>, bodyB: Body<T>);
+  constructor(def: JointDef<T> | JointOpt<T>, bodyA?: Body<T>, bodyB?: Body<T>) {
     bodyA = 'bodyA' in def ? def.bodyA : bodyA;
     bodyB = 'bodyB' in def ? def.bodyB : bodyB;
 
@@ -143,21 +143,21 @@ export default abstract class Joint {
   /**
    * Get the first body attached to this joint.
    */
-  getBodyA(): Body {
+  getBodyA() {
     return this.m_bodyA;
   }
 
   /**
    * Get the second body attached to this joint.
    */
-  getBodyB(): Body {
+  getBodyB() {
     return this.m_bodyB;
   }
 
   /**
    * Get the next joint the world joint list.
    */
-  getNext(): Joint {
+  getNext() {
     return this.m_next;
   }
 
@@ -165,7 +165,7 @@ export default abstract class Joint {
     return this.m_userData;
   }
 
-  setUserData(data: unknown): void {
+  setUserData(data: T): void {
     this.m_userData = data;
   }
 
