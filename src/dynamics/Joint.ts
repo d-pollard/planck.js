@@ -161,7 +161,7 @@ export default abstract class Joint<T = null> {
     return this.m_next;
   }
 
-  getUserData(): unknown {
+  getUserData(): T {
     return this.m_userData;
   }
 
