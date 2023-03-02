@@ -46,7 +46,7 @@ import { TimeStep } from "../Solver";
  * @prop {Vec2} localAnchorB
  * @prop {float} referenceAngle
  */
-export interface WeldJointOpt extends JointOpt {
+export interface WeldJointOpt<T = null> extends JointOpt<T> {
   /**
    * The mass-spring-damper frequency in Hertz. Rotation only. Disable softness
    * with a value of 0.
@@ -66,7 +66,7 @@ export interface WeldJointOpt extends JointOpt {
  * attached and the relative body angle. The position of the anchor points is
  * important for computing the reaction torque.
  */
-export interface WeldJointDef extends JointDef, WeldJointOpt {
+export interface WeldJointDef<T = null> extends JointDef<T>, WeldJointOpt<T> {
   /**
    * The local anchor point relative to bodyA's origin.
    */
@@ -86,7 +86,7 @@ const DEFAULTS = {
  * A weld joint essentially glues two bodies together. A weld joint may distort
  * somewhat because the island constraint solver is approximate.
  */
-export default class WeldJoint extends Joint {
+export default class WeldJoint<T = null> extends Joint<T> {
   static TYPE = 'weld-joint' as const
 
   /** @internal */ m_type: 'weld-joint';
@@ -113,9 +113,9 @@ export default class WeldJoint extends Joint {
   /** @internal */ m_invIB: number;
   /** @internal */ m_mass: Mat33;
 
-  constructor(def: WeldJointDef);
-  constructor(def: WeldJointOpt, bodyA: Body, bodyB: Body, anchor: Vec2);
-  constructor(def: WeldJointDef, bodyA?: Body, bodyB?: Body, anchor?: Vec2) {
+  constructor(def: WeldJointDef<T>);
+  constructor(def: WeldJointOpt<T>, bodyA: Body<T>, bodyB: Body<T>, anchor: Vec2);
+  constructor(def: WeldJointDef<T>, bodyA?: Body<T>, bodyB?: Body<T>, anchor?: Vec2) {
     // @ts-ignore
     if (!(this instanceof WeldJoint)) {
       return new WeldJoint(def, bodyA, bodyB, anchor);
