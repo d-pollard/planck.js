@@ -3472,7 +3472,7 @@ declare interface RopeJoint extends Joint {
  * @prop {Vec2} localAnchorB
  * @prop {float} referenceAngle
  */
-interface WeldJointOpt extends JointOpt {
+interface WeldJointOpt<T = null> extends JointOpt<T> {
     /**
      * The mass-spring-damper frequency in Hertz. Rotation only. Disable softness
      * with a value of 0.
@@ -3492,7 +3492,7 @@ interface WeldJointOpt extends JointOpt {
  * attached and the relative body angle. The position of the anchor points is
  * important for computing the reaction torque.
  */
-interface WeldJointDef extends JointDef, WeldJointOpt {
+interface WeldJointDef<T = null> extends JointDef<T>, WeldJointOpt<T> {
     /**
      * The local anchor point relative to bodyA's origin.
      */
@@ -3503,17 +3503,17 @@ interface WeldJointDef extends JointDef, WeldJointOpt {
     localAnchorB: Vec2;
 }
 declare const WeldJoint: {
-    new (def: WeldJointDef): WeldJoint;
-    (def: WeldJointDef): WeldJoint;
-    new (def: WeldJointOpt, bodyA: Body, bodyB: Body, anchor: Vec2): WeldJoint;
-    (def: WeldJointOpt, bodyA: Body, bodyB: Body, anchor: Vec2): WeldJoint;
+    new (def: WeldJointDef<T>): WeldJoint;
+    (def: WeldJointDef<T>): WeldJoint;
+    new (def: WeldJointOpt<T>, bodyA: Body<T>, bodyB: Body<T>, anchor: Vec2): WeldJoint;
+    (def: WeldJointOpt<T>, bodyA: Body<T>, bodyB: Body<T>, anchor: Vec2): WeldJoint;
     TYPE: "weld-joint";
 };
 /**
  * A weld joint essentially glues two bodies together. A weld joint may distort
  * somewhat because the island constraint solver is approximate.
  */
-declare interface WeldJoint extends Joint {
+declare interface WeldJoint extends Joint<T> {
     /**
      * The local anchor point relative to bodyA's origin.
      */
