@@ -3503,17 +3503,17 @@ interface WeldJointDef<T = null> extends JointDef<T>, WeldJointOpt<T> {
     localAnchorB: Vec2;
 }
 declare const WeldJoint: {
-    new (def: WeldJointDef<T>): WeldJoint;
-    (def: WeldJointDef<T>): WeldJoint;
-    new (def: WeldJointOpt<T>, bodyA: Body<T>, bodyB: Body<T>, anchor: Vec2): WeldJoint;
-    (def: WeldJointOpt<T>, bodyA: Body<T>, bodyB: Body<T>, anchor: Vec2): WeldJoint;
+    new <T = null>(def: WeldJointDef<T>): WeldJoint;
+    <T = null>(def: WeldJointDef<T>): WeldJoint;
+    new <T = null>(def: WeldJointOpt<T>, bodyA: Body<T>, bodyB: Body<T>, anchor: Vec2): WeldJoint;
+    <T = null>(def: WeldJointOpt<T>, bodyA: Body<T>, bodyB: Body<T>, anchor: Vec2): WeldJoint;
     TYPE: "weld-joint";
 };
 /**
  * A weld joint essentially glues two bodies together. A weld joint may distort
  * somewhat because the island constraint solver is approximate.
  */
-declare interface WeldJoint extends Joint<T> {
+declare interface WeldJoint<T = null> extends Joint<T> {
     /**
      * The local anchor point relative to bodyA's origin.
      */

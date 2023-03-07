@@ -118,7 +118,7 @@ export default class WeldJoint<T = null> extends Joint<T> {
   constructor(def: WeldJointDef<T>, bodyA?: Body<T>, bodyB?: Body<T>, anchor?: Vec2) {
     // @ts-ignore
     if (!(this instanceof WeldJoint)) {
-      return new WeldJoint(def, bodyA, bodyB, anchor);
+      return new WeldJoint<T>(def, bodyA, bodyB, anchor);
     }
 
     def = options(def, DEFAULTS);

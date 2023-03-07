@@ -32,6 +32,7 @@ function splitClassIntoConstAndInterface(factory, node) {
 }
 
 function createConstNodeWithStaticMethods(factory, node) {
+  // if (node.name.escapedText === "WeldJoint") console.log(node);
   return factory.createVariableStatement(
     [factory.createModifier(ts.SyntaxKind.DeclareKeyword)],
     factory.createVariableDeclarationList(
@@ -44,7 +45,7 @@ function createConstNodeWithStaticMethods(factory, node) {
             .filter(ts.isConstructorDeclaration)
             .flatMap(member => [
               factory.createConstructSignature(
-                undefined,
+                node.typeParameters,
                 member.parameters,
                 factory.createTypeReferenceNode(
                   node.name,
@@ -52,7 +53,7 @@ function createConstNodeWithStaticMethods(factory, node) {
                 )
               ),
               factory.createCallSignature(
-                undefined,
+                node.typeParameters,
                 member.parameters,
                 factory.createTypeReferenceNode(
                   node.name,
@@ -80,7 +81,7 @@ function createInterfaceWithMethods(factory, node) {
     undefined,
     [factory.createModifier(ts.SyntaxKind.DeclareKeyword)],
     node.name,
-    undefined,
+    node.typeParameters,
     node.heritageClauses,
     // instance properties
     node.members
